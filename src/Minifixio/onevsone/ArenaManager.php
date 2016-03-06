@@ -147,7 +147,7 @@ class ArenaManager{
 	/**
 	 * Launches new rounds if necessary
 	 */
-	private function launchNewRounds(){
+    private function launchNewRounds(){
 
         // Check that there is at least 2 players in the queue
         if(count($this->queue) < 2){
