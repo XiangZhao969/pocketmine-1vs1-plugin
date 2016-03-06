@@ -148,35 +148,43 @@ class ArenaManager{
 	 * Launches new rounds if necessary
 	 */
 	private function launchNewRounds(){
-		
-		// Check that there is at least 2 players in the queue
-		if(count($this->queue) < 2){
-			$this->getServer()->getLogger()->debug("There is not enough players to start a duel : " . count($this->queue)); //Again, bad practise by using a static function(Server::getInstance), Fixed this.
-			return;
-		}
-		
-		// Check if there is any arena free (not active)
-		$this->getServer()->getLogger()->debug("Check ".  count($this->arenas) . " arenas"); //Again, bad practise by using a static function(Server::getInstance), Fixed this.
-		
-		$freeArena = NULL;
-		foreach ($this->arenas as $arena){
-			if(!$arena->active){
-				$freeArena = $arena;
-				break;
-			}
-		}
-		
-		if($freeArena == NULL){
-			$this->getServer()->getLogger()->debug("[1vs1] - No free arena found"); //Again, bad practise by using a static function(Server::getInstance), Fixed this.
-			return;
-		}
-		
-		// Send the players into the arena (and remove them from queues)
-		$roundPlayers = array();
-		array_push($roundPlayers, array_shift($this->queue), array_shift($this->queue));
-		$this->getServer->getLogger()->debug("[1vs1] - Starting duel : " . $roundPlayers[0]->getName() . " vs " . $roundPlayers[1]->getName()); //Again, bad practise by using a static function(Server::getInstance), Fixed this.
-		$freeArena->startRound($roundPlayers);
-	}
+
+        // Check that there is at least 2 players in the queue
+        if(count($this->queue) < 2){
+            Server::getInstance()->getLogger()->debug("There is not enough players to start a duel : " . count($this->queue));
+            return;
+        }
+
+        // Check if there is any arena free (not active)
+        Server::getInstance()->getLogger()->debug("Check ".  count($this->arenas) . " arenas");
+
+        $freeArena = NULL;
+        $freeArenaCount = 0;
+        foreach ($this->arenas as $arena){
+            if(!$arena->active){
+                $freeArenaCount++;
+                $freeArena[$freeArenaCount] = $arena;
+            }
+        }
+
+        if($freeArena == NULL){
+            Server::getInstance()->getLogger()->debug("[1vs1] - No free arena found");
+            return;
+        }
+
+        //Randomize
+        $freeArenas = count($freeArena);
+        var_dump($freeArenas);
+        $finalArena = mt_rand(1, $freeArenas);
+        var_dump($finalArena);
+        $freeArenafinal = $freeArena[$finalArena];
+
+        // Send the players into the arena (and remove them from queues)
+        $roundPlayers = array();
+        array_push($roundPlayers, array_shift($this->queue), array_shift($this->queue));
+        Server::getInstance()->getLogger()->debug("[1vs1] - Starting duel : " . $roundPlayers[0]->getName() . " vs " . $roundPlayers[1]->getName());
+        $freeArenafinal->startRound($roundPlayers);
+    }
 	
 	/**
 	 * Allows to be notify when rounds ends
